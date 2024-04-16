@@ -3,106 +3,138 @@ import Board from "./Board.jsx";
 
 // GameData
 // Groups: description, words
-const fakeGameData = {
+const gameData = {
   groups: [
     {
-      description: "one type words",
-      words: ["oneaye", "onebee", "onesea", "onedee"],
+      description: "Foods",
+      words: ["Taco", "Donut", "Popcorn", "Burrito"],
     },
     {
-      description: "two type words",
-      words: ["twoaye", "twobee", "twosea", "twodee"],
+      description: "Utensils",
+      words: ["Fork", "Spoon", "Chopsticks", "Fingers"],
     },
     {
-      description: "three type words",
-      words: ["threeaye", "threebee", "threesea", "threedee"],
+      description: "Things found in a bedroom",
+      words: ["Pillow", "Pyjama", "Bed", "Lamp"],
     },
     {
-      description: "four type words",
-      words: ["fouraye", "fourbee", "foursea", "fourdee"],
+      description: "Ones that don't fit the rest",
+      words: ["Shoe", "Ball", "Door", "Canada"],
     },
   ],
 };
 
-const fakeWords = [
+const initialWords = [
   "Taco",
   "Shoe",
   "Ball",
   "Door",
-  "Atom",
-  "Tiny",
+  "Fingers",
+  "Pillow",
   "Burrito",
-  "Turtle",
-  "Canada",
+  "Pyjama",
+  "Chopsticks",
   "Donut",
   "Popcorn",
-  "Cookie",
-  "Knife",
+  "Canada",
+  "Fork",
   "Spoon",
   "Bed",
   "Lamp",
 ];
 
-// const initialState = Array(fakeWords.length).fill(false);
-const initialSelected = Array(16).fill(false);
 const Game = () => {
-  const [selected, setSelected] = useState(initialSelected);
-  const [correctGroups, setCorrectGroups] = useState([
-    false,
-    false,
-    false,
-    false,
-  ]);
-  const [mistakesLeft, setMistakesLeft] = useState(4);
+  const [selected, setSelected] = useState([]); // none selected
+  const toggleSelected = (value) => {
+    if (selected.includes(value)) {
+      // remove if already selected
+      setSelected(selected.filter((v) => v !== value));
+    } else {
+      // add if not selected unless already full
+      if (selected.length === 4) return;
+      setSelected([...selected, value]);
+    }
+  };
 
-  if (mistakesLeft === -1) return <>you lose</>;
+  const [solvedGroups, setSolvedGroups] = useState([]); // none solved
+  const solvedGroupData = gameData.groups.filter(({ description }) =>
+    solvedGroups.includes(description),
+  );
 
-  let selectedCount = 0;
-  selected.forEach((v) => {
-    if (v) selectedCount++;
+  let solvedWords = [];
+  solvedGroupData.forEach(({ words }) => {
+    solvedWords = solvedWords.concat(words);
   });
+  const remainingWords = initialWords.filter(
+    (word) => !solvedWords.includes(word),
+  );
 
-  // let mistakeDots = [];
-  // for (let i = 0; i < mistakesLeft; i += 1) mistakeDots += <>&#9679;</>;
+  const [mistakesLeft, setMistakesLeft] = useState(4);
+  if (mistakesLeft === -1) return <>you lose</>;
 
   return (
     <>
-      <div className={"card"}>Create four groups of four</div>
+      {solvedGroups.length < 4 && (
+        <div className={"card"}>Create four groups of four</div>
+      )}
       <div>
         <Board
-          words={fakeWords}
+          words={remainingWords}
           selected={selected}
-          setSelected={setSelected}
+          solvedGroupData={solvedGroupData}
+          toggleSelected={toggleSelected}
         />
 
-        <div className={"card"}>
-          mistakes remaining:{" "}
-          {Array(mistakesLeft)
-            .fill(null)
-            .map((v, i) => (
-              <span key={"dot" + i}>&#9679; </span>
-            ))}
-        </div>
-        <div>
-          <button onClick={() => alert("shuffle not implemented yet")}>
-            Shuffle
-          </button>{" "}
-          <button
-            disabled={selectedCount === 0}
-            onClick={() => setSelected(initialSelected)}
-          >
-            Deselect All
-          </button>{" "}
-          <button
-            disabled={selectedCount < 4}
-            onClick={() => {
-              console.log("selected", selected);
-              setMistakesLeft((n) => n - 1);
-            }}
-          >
-            Submit
-          </button>
-        </div>
+        {solvedGroups.length < 4 ? (
+          <>
+            <div className={"card"}>
+              mistakes remaining:{" "}
+              {Array(mistakesLeft)
+                .fill(null)
+                .map((v, i) => (
+                  <span key={"dot" + i}>&#9679; </span>
+                ))}
+            </div>
+            <div>
+              <button onClick={() => alert("shuffle not implemented yet")}>
+                Shuffle
+              </button>{" "}
+              <button
+                disabled={selected.length === 0}
+                onClick={() => setSelected([])}
+              >
+                Deselect All
+              </button>{" "}
+              <button
+                disabled={selected.length < 4}
+                onClick={() => {
+                  const matchedGroup = gameData.groups.find(({ words }) =>
+                    words.every((word) => selected.includes(word)),
+                  );
+                  if (matchedGroup) {
+                    setSelected([]);
+                    setSolvedGroups([
+                      ...solvedGroups,
+                      matchedGroup.description,
+                    ]);
+                  } else {
+                    setMistakesLeft((n) => n - 1);
+                  }
+                }}
+              >
+                Submit
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <br />
+            <br />
+            Congratulations, you win.
+            <br />
+            <br />
+          </>
+        )}
       </div>
     </>
   );

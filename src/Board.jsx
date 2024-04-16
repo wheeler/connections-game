@@ -2,34 +2,22 @@ import "./Board.scss";
 import Item from "./Item.jsx";
 import SolvedGroup from "./SolvedGroup.jsx";
 
-// boardData: {
-//   solvedGroups: [],
-//   words: [],
-//   selectWord: fn()
-// }
-
 // eslint-disable-next-line react/prop-types
-const Board = ({ words, selected, setSelected }) => {
+const Board = ({ words, selected, solvedGroupData, toggleSelected }) => {
   return (
     <div className={"board"}>
-      <SolvedGroup solvedGroup={{ description: "hi", words: ["a", "b"] }} />
-      {selected.map((data, index) => (
+      {solvedGroupData.map((item, index) => (
+        <SolvedGroup key={index} solvedGroup={item} />
+      ))}
+      {words.map((data, index) => (
         <Item
-          itemOnClick={() => {
-            let selectedCount = 0;
-            selected.forEach((v) => {
-              if (v) selectedCount++;
-            });
-            if (selected[index] === false && selectedCount >= 4) return; // max 4 selected at a time
-
-            const newState = [...selected];
-            newState[index] = !newState[index];
-            setSelected(newState);
-          }}
-          selected={selected[index]}
           key={index}
+          itemOnClick={() => {
+            toggleSelected(data);
+          }}
+          selected={selected.includes(data)}
         >
-          {words[index]}
+          {data}
         </Item>
       ))}
     </div>
