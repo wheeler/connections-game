@@ -47,7 +47,10 @@ const gameData = {
 };
 
 const Game = () => {
+  // used to prevent double submission
   const [submitLocked, setSubmitLocked] = useState(false);
+
+  // represents which words the player has selected to guess
   const [selected, setSelected] = useState([]); // none selected
   const toggleSelected = (value) => {
     if (selected.includes(value)) {
@@ -62,19 +65,23 @@ const Game = () => {
     }
   };
 
+  // contains which groups the player has guessed correctly
   const [solvedGroups, setSolvedGroups] = useState([]); // none solved
   const solvedGroupData = gameData.groups.filter(({ description }) =>
     solvedGroups.includes(description),
   );
 
+  // all the words contained in the solved groups
   let solvedWords = [];
   solvedGroupData.forEach(({ words }) => {
     solvedWords = solvedWords.concat(words);
   });
+  // all the words not contained in solved groups
   const remainingWords = gameData.words.filter(
     (word) => !solvedWords.includes(word),
   );
 
+  // how many tries the user still has to guess
   const [mistakesLeft, setMistakesLeft] = useState(4);
   if (mistakesLeft === 0) return <>you lose</>;
 
