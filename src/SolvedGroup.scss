@@ -1,5 +1,6 @@
 .solved-group {
-  height: 70px;
+  height: 64px;
+  padding-top: 6px;
 
   grid-column-end: span 4;
   width: 100%;
@@ -8,4 +9,21 @@
   border-radius: 8px;
   //min-width: 120px;
   margin: auto;
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  &.easy {
+    background-color: rgb(249, 223, 109);
+  }
+  &.medium {
+    background-color: rgb(160, 195, 90);
+  }
+  &.hard {
+    background-color: rgb(176, 196, 239);
+  }
+  &.tricky {
+    background-color: rgb(186, 129, 197);
+  }
 }
