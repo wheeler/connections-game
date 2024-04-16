@@ -4,6 +4,24 @@ import Board from "./Board.jsx";
 // GameData
 // Groups: description, words
 const gameData = {
+  words: [
+    "Taco",
+    "Shoe",
+    "Ball",
+    "Door",
+    "Fingers",
+    "Pillow",
+    "Burrito",
+    "Pyjama",
+    "Chopsticks",
+    "Donut",
+    "Popcorn",
+    "Canada",
+    "Fork",
+    "Spoon",
+    "Bed",
+    "Lamp",
+  ],
   groups: [
     {
       description: "Foods",
@@ -27,25 +45,6 @@ const gameData = {
     },
   ],
 };
-
-const initialWords = [
-  "Taco",
-  "Shoe",
-  "Ball",
-  "Door",
-  "Fingers",
-  "Pillow",
-  "Burrito",
-  "Pyjama",
-  "Chopsticks",
-  "Donut",
-  "Popcorn",
-  "Canada",
-  "Fork",
-  "Spoon",
-  "Bed",
-  "Lamp",
-];
 
 const Game = () => {
   const [submitLocked, setSubmitLocked] = useState(false);
@@ -72,7 +71,7 @@ const Game = () => {
   solvedGroupData.forEach(({ words }) => {
     solvedWords = solvedWords.concat(words);
   });
-  const remainingWords = initialWords.filter(
+  const remainingWords = gameData.words.filter(
     (word) => !solvedWords.includes(word),
   );
 
