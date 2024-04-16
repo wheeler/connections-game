@@ -48,15 +48,18 @@ const initialWords = [
 ];
 
 const Game = () => {
+  const [submitLocked, setSubmitLocked] = useState(false);
   const [selected, setSelected] = useState([]); // none selected
   const toggleSelected = (value) => {
     if (selected.includes(value)) {
       // remove if already selected
       setSelected(selected.filter((v) => v !== value));
+      setSubmitLocked(false);
     } else {
       // add if not selected unless already full
       if (selected.length === 4) return;
       setSelected([...selected, value]);
+      setSubmitLocked(false);
     }
   };
 
@@ -105,12 +108,15 @@ const Game = () => {
               </button>{" "}
               <button
                 disabled={selected.length === 0}
-                onClick={() => setSelected([])}
+                onClick={() => {
+                  setSelected([]);
+                  setSubmitLocked(false);
+                }}
               >
                 Deselect All
               </button>{" "}
               <button
-                disabled={selected.length < 4}
+                disabled={submitLocked || selected.length < 4}
                 onClick={() => {
                   const matchedGroup = gameData.groups.find(({ words }) =>
                     words.every((word) => selected.includes(word)),
@@ -122,6 +128,7 @@ const Game = () => {
                       matchedGroup.description,
                     ]);
                   } else {
+                    setSubmitLocked(true);
                     setMistakesLeft((n) => n - 1);
                   }
                 }}
