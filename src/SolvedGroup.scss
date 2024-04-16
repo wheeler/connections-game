@@ -1,0 +1,11 @@
+.solved-group {
+  height: 70px;
+
+  grid-column-end: span 4;
+  width: 100%;
+  background-color: lightblue;
+  color: #1a1a1a;
+  border-radius: 8px;
+  //min-width: 120px;
+  margin: auto;
+}
