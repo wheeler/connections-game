@@ -77,7 +77,7 @@ const Game = () => {
   );
 
   const [mistakesLeft, setMistakesLeft] = useState(4);
-  if (mistakesLeft === -1) return <>you lose</>;
+  if (mistakesLeft === 0) return <>you lose</>;
 
   return (
     <>
