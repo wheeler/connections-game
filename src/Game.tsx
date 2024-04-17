@@ -1,9 +1,18 @@
 import { useState } from "react";
-import Board from "./Board.jsx";
+import Board from "./Board.tsx";
 
-// GameData
-// Groups: description, words
-const gameData = {
+export type WordGroup = {
+  description: string;
+  className?: string;
+  words: string[];
+};
+
+type GameData = {
+  words: string[];
+  groups: WordGroup[];
+};
+
+const gameData: GameData = {
   words: [
     "Taco",
     "Shoe",
@@ -51,8 +60,8 @@ const Game = () => {
   const [submitLocked, setSubmitLocked] = useState(false);
 
   // represents which words the player has selected to guess
-  const [selected, setSelected] = useState([]); // none selected
-  const toggleSelected = (value) => {
+  const [selected, setSelected] = useState<string[]>([]); // none selected
+  const toggleSelected = (value: string) => {
     if (selected.includes(value)) {
       // remove if already selected
       setSelected(selected.filter((v) => v !== value));
@@ -66,13 +75,13 @@ const Game = () => {
   };
 
   // contains which groups the player has guessed correctly
-  const [solvedGroups, setSolvedGroups] = useState([]); // none solved
+  const [solvedGroups, setSolvedGroups] = useState<string[]>([]); // none solved
   const solvedGroupData = gameData.groups.filter(({ description }) =>
     solvedGroups.includes(description),
   );
 
   // all the words contained in the solved groups
-  let solvedWords = [];
+  let solvedWords: string[] = [];
   solvedGroupData.forEach(({ words }) => {
     solvedWords = solvedWords.concat(words);
   });
@@ -104,7 +113,7 @@ const Game = () => {
               mistakes remaining:{" "}
               {Array(mistakesLeft)
                 .fill(null)
-                .map((v, i) => (
+                .map((_v, i) => (
                   <span key={"dot" + i}>&#9679; </span>
                 ))}
             </div>
