@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Board from "./Board.tsx";
+import shuffle from "lodash.shuffle";
 import type { GameData } from "./gameData.ts";
 
 export type WordGroup = {
@@ -9,6 +10,11 @@ export type WordGroup = {
 };
 
 const Game = ({ gameData }: { gameData: GameData }) => {
+  const [orderedWords, setOrderedWords] = useState(gameData.words);
+  const shuffleWords = () => {
+    setOrderedWords(shuffle(orderedWords));
+  };
+
   // used to prevent double submission
   const [submitLocked, setSubmitLocked] = useState(false);
 
@@ -39,7 +45,7 @@ const Game = ({ gameData }: { gameData: GameData }) => {
     solvedWords = solvedWords.concat(words);
   });
   // all the words not contained in solved groups
-  const remainingWords = gameData.words.filter(
+  const remainingWords = orderedWords.filter(
     (word) => !solvedWords.includes(word),
   );
 
@@ -71,9 +77,7 @@ const Game = ({ gameData }: { gameData: GameData }) => {
                 ))}
             </div>
             <div>
-              <button onClick={() => alert("shuffle not implemented yet")}>
-                Shuffle
-              </button>{" "}
+              <button onClick={shuffleWords}>Shuffle</button>{" "}
               <button
                 disabled={selected.length === 0}
                 onClick={() => {
