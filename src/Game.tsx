@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Board from "./Board.tsx";
+import type { GameData } from "./gameData.ts";
 
 export type WordGroup = {
   description: string;
@@ -7,55 +8,7 @@ export type WordGroup = {
   words: string[];
 };
 
-type GameData = {
-  words: string[];
-  groups: WordGroup[];
-};
-
-const gameData: GameData = {
-  words: [
-    "Taco",
-    "Shoe",
-    "Ball",
-    "Door",
-    "Fingers",
-    "Pillow",
-    "Burrito",
-    "Pyjama",
-    "Chopsticks",
-    "Donut",
-    "Popcorn",
-    "Canada",
-    "Fork",
-    "Spoon",
-    "Bed",
-    "Lamp",
-  ],
-  groups: [
-    {
-      description: "Foods",
-      className: "easy",
-      words: ["Taco", "Donut", "Popcorn", "Burrito"],
-    },
-    {
-      description: "Utensils",
-      className: "medium",
-      words: ["Fork", "Spoon", "Chopsticks", "Fingers"],
-    },
-    {
-      description: "Things found in a bedroom",
-      className: "hard",
-      words: ["Pillow", "Pyjama", "Bed", "Lamp"],
-    },
-    {
-      description: "Ones that don't fit the rest",
-      className: "tricky",
-      words: ["Shoe", "Ball", "Door", "Canada"],
-    },
-  ],
-};
-
-const Game = () => {
+const Game = ({ gameData }: { gameData: GameData }) => {
   // used to prevent double submission
   const [submitLocked, setSubmitLocked] = useState(false);
 
