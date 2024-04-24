@@ -1,3 +1,5 @@
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 import "./Board.scss";
 import Item from "./Item.tsx";
 import SolvedGroup from "./SolvedGroup.tsx";
@@ -16,8 +18,10 @@ const Board = ({
   solvedGroupData,
   toggleSelected,
 }: BoardProps) => {
+  const [parent] = useAutoAnimate({ duration: 400 });
+
   return (
-    <div className={"board"}>
+    <div ref={parent} className={"board"}>
       {solvedGroupData.map((item) => (
         <SolvedGroup key={item.description} solvedGroup={item} />
       ))}
