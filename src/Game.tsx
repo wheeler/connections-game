@@ -102,15 +102,18 @@ const Game = ({ gameData }: { gameData: GameData }) => {
                     //   This results in a slick-minimal animation of only the top words moving down.
                     // First get the remaining top row words
                     const topRowWords = remainingWords
-                      .slice(0, 4)
+                      .slice(0, 4) // take the first four
                       .filter((word) => !matchedGroup.words.includes(word));
                     // Now take the bottom words and use map to...
-                    const bottomWords = remainingWords.slice(4).map((word) => {
-                      // Replace words that are being removed with top row words
-                      if (matchedGroup.words.includes(word)) {
-                        return topRowWords.shift()!;
-                      } else return word; // do nothing to other words
-                    });
+                    const bottomWords = remainingWords
+                      .slice(4) // skip the first four
+                      .map((word) => {
+                        if (matchedGroup.words.includes(word)) {
+                          return topRowWords.shift()!; // replace with word from the top
+                        } else {
+                          return word; // do nothing to other words
+                        }
+                      });
 
                     setRemainingWords(bottomWords);
                   } else {
