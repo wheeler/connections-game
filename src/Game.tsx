@@ -97,10 +97,22 @@ const Game = ({ gameData }: { gameData: GameData }) => {
                       ...solvedGroups,
                       matchedGroup.description,
                     ]);
-                    // remove these words from the remaining words
-                    const newRemainingWords = remainingWords.filter(
-                      (word) => !matchedGroup.words.includes(word),
-                    );
+
+                    // Re-order the remaining words on the top row into the spots made vacant by the selected words.
+                    //   This results in a slick-minimal animation of only the top words moving down.
+                    // First get the remaining top row words
+                    const topRowWords = remainingWords
+                      .slice(0, 4)
+                      .filter((word) => !matchedGroup.words.includes(word));
+                    // Now take the bottom words and use map to...
+                    const bottomWords = remainingWords.slice(4).map((word) => {
+                      // Replace words that are being removed with top row words
+                      if (matchedGroup.words.includes(word)) {
+                        return topRowWords.shift()!;
+                      } else return word; // do nothing to other words
+                    });
+
+                    setRemainingWords(bottomWords);
                   } else {
                     setSubmitLocked(true);
                     setMistakesLeft((n) => n - 1);
