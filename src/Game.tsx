@@ -10,9 +10,9 @@ export type WordGroup = {
 };
 
 const Game = ({ gameData }: { gameData: GameData }) => {
-  const [orderedWords, setOrderedWords] = useState(gameData.words);
+  const [remainingWords, setRemainingWords] = useState(gameData.words);
   const shuffleWords = () => {
-    setOrderedWords(shuffle(orderedWords));
+    setRemainingWords(shuffle(remainingWords));
   };
 
   // used to prevent double submission
@@ -44,10 +44,6 @@ const Game = ({ gameData }: { gameData: GameData }) => {
   solvedGroupData.forEach(({ words }) => {
     solvedWords = solvedWords.concat(words);
   });
-  // all the words not contained in solved groups
-  const remainingWords = orderedWords.filter(
-    (word) => !solvedWords.includes(word),
-  );
 
   // how many tries the user still has to guess
   const [mistakesLeft, setMistakesLeft] = useState(4);
@@ -90,6 +86,8 @@ const Game = ({ gameData }: { gameData: GameData }) => {
               <button
                 disabled={submitLocked || selected.length < 4}
                 onClick={() => {
+                  // do the selected words match a word group?
+                  // todo: minor improvement ~ skip already correct groups
                   const matchedGroup = gameData.groups.find(({ words }) =>
                     words.every((word) => selected.includes(word)),
                   );
@@ -99,6 +97,10 @@ const Game = ({ gameData }: { gameData: GameData }) => {
                       ...solvedGroups,
                       matchedGroup.description,
                     ]);
+                    // remove these words from the remaining words
+                    const newRemainingWords = remainingWords.filter(
+                      (word) => !matchedGroup.words.includes(word),
+                    );
                   } else {
                     setSubmitLocked(true);
                     setMistakesLeft((n) => n - 1);
