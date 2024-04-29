@@ -27,3 +27,10 @@
     background-color: rgb(186, 129, 197);
   }
 }
+
+@media only screen and (max-width: 664px) {
+  .solved-group {
+    height: 82px;
+    padding-top: 18px;
+  }
+}
