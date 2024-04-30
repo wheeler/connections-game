@@ -11,15 +11,13 @@ export type WordGroup = {
 
 const Game = ({ gameData }: { gameData: GameData }) => {
   const [remainingWords, setRemainingWords] = useState(gameData.words);
-  const shuffleWords = () => {
-    setRemainingWords(shuffle(remainingWords));
-  };
 
   // used to prevent double submission
   const [submitLocked, setSubmitLocked] = useState(false);
 
   // represents which words the player has selected to guess
-  const [selected, setSelected] = useState<string[]>([]); // none selected
+  const fakeinitial = ["Taco", "Burrito", "Donut", "Popcorn"];
+  const [selected, setSelected] = useState<string[]>(fakeinitial); // none selected
   const toggleSelected = (value: string) => {
     if (selected.includes(value)) {
       // remove if already selected
@@ -39,6 +37,47 @@ const Game = ({ gameData }: { gameData: GameData }) => {
     solvedGroups.includes(description),
   );
 
+  // button event functions
+  const onShuffle = () => {
+    setRemainingWords(shuffle(remainingWords));
+  };
+  const onDeselectAll = () => {
+    setSelected([]);
+    setSubmitLocked(false);
+  };
+  const onSubmit = () => {
+    // do the selected words match a word group?
+    // todo: minor improvement ~ skip already correct groups
+    const matchedGroup = gameData.groups.find(({ words }) =>
+      words.every((word) => selected.includes(word)),
+    );
+    if (matchedGroup) {
+      setSelected([]);
+      setSolvedGroups([...solvedGroups, matchedGroup.description]);
+
+      // Re-order the remaining words on the top row into the spots made vacant by the selected words.
+      //   This results in a slick-minimal animation of only the top words moving down.
+      // First get the remaining top row words
+      const topRowWords = remainingWords
+        .slice(0, 4) // take the first four
+        .filter((word) => !matchedGroup.words.includes(word));
+      // Now take the bottom words and use map to...
+      const bottomWords = remainingWords
+        .slice(4) // skip the first four
+        .map((word) => {
+          if (matchedGroup.words.includes(word)) {
+            return topRowWords.shift()!; // replace with word from the top
+          } else {
+            return word; // do nothing to other words
+          }
+        });
+
+      setRemainingWords(bottomWords);
+    } else {
+      setSubmitLocked(true);
+      setMistakesLeft((n) => n - 1);
+    }
+  };
 
   // how many tries the user still has to guess
   const [mistakesLeft, setMistakesLeft] = useState(4);
@@ -68,54 +107,13 @@ const Game = ({ gameData }: { gameData: GameData }) => {
                 ))}
             </div>
             <div>
-              <button onClick={shuffleWords}>Shuffle</button>{" "}
-              <button
-                disabled={selected.length === 0}
-                onClick={() => {
-                  setSelected([]);
-                  setSubmitLocked(false);
-                }}
-              >
+              <button onClick={onShuffle}>Shuffle</button>{" "}
+              <button disabled={selected.length === 0} onClick={onDeselectAll}>
                 Deselect All
               </button>{" "}
               <button
                 disabled={submitLocked || selected.length < 4}
-                onClick={() => {
-                  // do the selected words match a word group?
-                  // todo: minor improvement ~ skip already correct groups
-                  const matchedGroup = gameData.groups.find(({ words }) =>
-                    words.every((word) => selected.includes(word)),
-                  );
-                  if (matchedGroup) {
-                    setSelected([]);
-                    setSolvedGroups([
-                      ...solvedGroups,
-                      matchedGroup.description,
-                    ]);
-
-                    // Re-order the remaining words on the top row into the spots made vacant by the selected words.
-                    //   This results in a slick-minimal animation of only the top words moving down.
-                    // First get the remaining top row words
-                    const topRowWords = remainingWords
-                      .slice(0, 4) // take the first four
-                      .filter((word) => !matchedGroup.words.includes(word));
-                    // Now take the bottom words and use map to...
-                    const bottomWords = remainingWords
-                      .slice(4) // skip the first four
-                      .map((word) => {
-                        if (matchedGroup.words.includes(word)) {
-                          return topRowWords.shift()!; // replace with word from the top
-                        } else {
-                          return word; // do nothing to other words
-                        }
-                      });
-
-                    setRemainingWords(bottomWords);
-                  } else {
-                    setSubmitLocked(true);
-                    setMistakesLeft((n) => n - 1);
-                  }
-                }}
+                onClick={onSubmit}
               >
                 Submit
               </button>
