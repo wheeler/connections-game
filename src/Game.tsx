@@ -39,11 +39,6 @@ const Game = ({ gameData }: { gameData: GameData }) => {
     solvedGroups.includes(description),
   );
 
-  // all the words contained in the solved groups
-  let solvedWords: string[] = [];
-  solvedGroupData.forEach(({ words }) => {
-    solvedWords = solvedWords.concat(words);
-  });
 
   // how many tries the user still has to guess
   const [mistakesLeft, setMistakesLeft] = useState(4);
