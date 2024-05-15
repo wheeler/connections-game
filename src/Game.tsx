@@ -9,6 +9,9 @@ export type WordGroup = {
   words: string[];
 };
 
+const initialSelected: string[] = [];
+// const initialSelected: string[] = ["Taco", "Burrito", "Donut", "Popcorn"]; // for faster testing
+
 const Game = ({ gameData }: { gameData: GameData }) => {
   const [remainingWords, setRemainingWords] = useState(gameData.words);
 
@@ -16,8 +19,7 @@ const Game = ({ gameData }: { gameData: GameData }) => {
   const [submitLocked, setSubmitLocked] = useState(false);
 
   // represents which words the player has selected to guess
-  const fakeinitial = ["Taco", "Burrito", "Donut", "Popcorn"];
-  const [selected, setSelected] = useState<string[]>(fakeinitial); // none selected
+  const [selected, setSelected] = useState<string[]>(initialSelected); // none selected
   const toggleSelected = (value: string) => {
     if (selected.includes(value)) {
       // remove if already selected
